@@ -1,5 +1,5 @@
-file(GLOB_RECURSE EXAMPLE_SOURCES CONFIGURE_DEPENDS src/*.c src/*.cc src/*.cpp src/*.cxx src/*.c++)
+find_package(imgui CONFIG REQUIRED)
 
-add_executable(example ${EXAMPLE_SOURCES})
+add_executable(example src/main.cpp)
 target_include_directories(example PRIVATE src/)
-target_link_libraries(example PRIVATE engine::engine)
+target_link_libraries(example PRIVATE engine::engine imgui::imgui)
