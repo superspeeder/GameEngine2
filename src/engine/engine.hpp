@@ -1,7 +1,10 @@
 #pragma once
 
+#define GLFW_INCLUDE_VULKAN
+#define GLFW_INCLUDE_NONE
+
+#include <vulkan/vulkan.hpp>
 #include <spdlog/spdlog.h>
-#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
@@ -12,6 +15,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <cstring>
+#include <string_view>
 
 namespace engine {
     template<typename T>
@@ -20,22 +24,43 @@ namespace engine {
         T size;
     };
 
-    struct cpu_memory {
+    struct CpuMemory {
         size_t size;
         void* data;
 
-        explicit inline cpu_memory(size_t size_) : size(size_) {
+        explicit inline CpuMemory(size_t size_) : size(size_) {
             data = std::malloc(size);
         };
 
-        inline ~cpu_memory() {
+        inline ~CpuMemory() {
             std::free(data);
         };
 
-        cpu_memory(const cpu_memory&) = delete;
-        cpu_memory& operator=(const cpu_memory&) = delete;
+        CpuMemory(const CpuMemory&) = delete;
+        CpuMemory& operator=(const CpuMemory&) = delete;
 
-        cpu_memory(cpu_memory&&) = default;
-        cpu_memory& operator=(cpu_memory&&) = default;
+        CpuMemory(CpuMemory&&) = default;
+        CpuMemory& operator=(CpuMemory&&) = default;
     };
+
+    template<typename T>
+    constexpr bool flags_check(const vk::Flags<T>& flags, const vk::Flags<T>& check) noexcept {
+        return (flags & check) == check;
+    };
+
+    template<typename T>
+    constexpr bool flags_check(const vk::Flags<T>& flags, const T& check) noexcept {
+        return (flags & check) == check;
+    };
+
+    struct Version {
+        uint32_t major, minor, patch;
+
+        [[nodiscard]] constexpr uint32_t makeVulkanVersion() const noexcept {
+            return VK_MAKE_API_VERSION(0, major, minor, patch);
+        };
+    };
+
+    constexpr Version VERSION = { 0, 1, 0 };
+    constexpr std::string_view NAME = "Unnamed GameEngine";
 }
