@@ -44,9 +44,22 @@ int main() {
     std::cout << "  Shading Language Version: " << glsl_version << '\n';
     std::cout << "=======================================================================================================================\n";
 
+
+    std::vector<float> verts = {0,0,0,1,0,0,0,1,0};
+    auto vertex_buffer = glw::Buffer::create(verts, glw::Buffer::Usage::StaticDraw);
+    auto vertex_array = glw::VertexArray::create();
+
+    vertex_buffer->bind(glw::Buffer::Target::Array);
+    vertex_array->bindVertexBuffer(vertex_buffer, {3});
+
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        vertex_array->bind();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
     }
